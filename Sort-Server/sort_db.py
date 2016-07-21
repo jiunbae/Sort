@@ -1,8 +1,17 @@
 #!/usr/bin/python
 import MySQLdb
 
+"""
+server = 'sort.cwinx5koe02z.ap-northeast-2.rds.amazonaws.com'
+user = "SortAdmin"
+passwd = "jiun062#"
+db_name = 'sort'
+"""
+server = 'localhost'
 user = "SortAdmin"
 passwd = "Sorted1234"
+db_name = 'sort'
+
 
 def dictfetchall(cursor):
     """Returns all rows from a cursor as a list of dicts"""
@@ -22,13 +31,13 @@ def isTable(table):
 
 class database():
 	def __init__(self):
-		self.db = MySQLdb.connect("localhost", user, passwd, "sort")
+		self.db = MySQLdb.connect(server, user, passwd, db_name)
 		self.cursor = self.db.cursor()
 
 	def getCursor(self):
 		if self.db.open:
 			self.db.close()
-			self.db = MySQLdb.connect("localhost", user, passwd, "sort")
+			self.db = MySQLdb.connect(server, user, passwd, db_name)
 		self.cursor = self.db.cursor()
 		return self.cursor
 
@@ -39,7 +48,7 @@ class database():
 
 	def getUsers(self):
 		cursor = self.getCursor()
-		cursor.execute("SELECT * FROM USERS")
+		cursor.execute("SELECT * FROM users")
 		return dictfetchall(cursor)
 
 	def getUserID(self, user):
@@ -48,8 +57,12 @@ class database():
 		return cursor.fetchone()[0]
 
 	def getUserData(self, user, table, column):
-		if not (isColumn(column) and isTable(table)):
+		if not (isColumn(table, column) and isTable(table)):
 			return False
+		if table == 'users':
+			cursor = self.getCursor()
+			cursor.execute("SELECT %s FROM %s WHERE user = \"%s\"" % (column, table, user))
+			return dictfetchall(cursor)
 		try:
 			id = self.getUserID(user)
 			cursor = self.getCursor()
@@ -79,11 +92,12 @@ class database():
 			return False
 		return dictfetchall(cursor)
 
-	def setUserData(self, id, table, column, value):
-		cursor = self.getCursor()
+	def setUserData(self, user, table, column, value):
 		if not (isTable(table) and isColumn(table, column)):
 			return False
 		try:
+			id = self.getUserID(user)
+			cursor = self.getCursor()
 			cursor.execute("UPDATE %s SET %s=\"%s\" WHERE user=%d" % (table, column, value, id))
 			self.db.commit()
 		except:
@@ -130,7 +144,7 @@ class database():
 		return id
 
 if __name__ == "__main__":
-	db = MySQLdb.connect("localhost", user, passwd, "sort")
+	db = MySQLdb.connect(server, user, passwd, db_name)
 	cursor = db.cursor()
 	cursor.execute("SELECT VERSION()")
 

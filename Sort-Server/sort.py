@@ -1,6 +1,7 @@
 import json
 import time
-from flask import Flask, request, make_response
+import hashlib
+from flask import Flask, request, make_response, render_template
 from flask_restful import Resource, Api
 from sort_db import database
 
@@ -24,10 +25,6 @@ class SortAPIHelp(Resource):
 
 api.add_resource(SortAPIHelp, '/')
 
-def timestamp():
-	now = time.localtime()
-	return "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
-
 data_empty = {
 	"_USER_ID": "VALUE",
 	"_USER_INIT" : "VALUE",
@@ -41,6 +38,37 @@ data_empty = {
 db = database()
 datas = {}
 
+class Admin(Resource):
+
+	def get(self):
+		return render_template('home.html')
+	def put(seelf):
+		return { "x" : "x" }
+
+api.add_resource(Admin, '/admin')
+
+tokens = {}
+
+def timestamp():
+	now = time.localtime()
+	return "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+
+def hasToken(user):
+	return user in tokens
+
+def getToken(user):
+	if (not db.isUser(user)):
+		return None
+	if (hasToken(user)):
+		return tokens[user]
+	key = timestamp() + user + "sortsalt"
+	tokens[user] = hashlib.sha1(key.encode('utf-8')).hexdigest()
+	return tokens[user]
+
+def outToken(user):
+	if (user in tokens):
+		del tokens[user]
+
 class Time(Resource):
 	
 	def get(self, user):
@@ -51,9 +79,15 @@ class Time(Resource):
 			"time": "TIME_VALUE"	
 		}"""
 	def put(self, user):
-		ret = 'accept'
-		if db.setUserDataFlag(user, request.args.getlist('flag')[0], request.data.decode('utf-8')):
-			ret = 'failed'
+		if (not request.args):
+			return { 'return': 'require more(less) argument' }
+		token = request.args.getlist('token')[0]
+		if not token in tokens.values():
+			return { 'return': 'Invalidate access' }
+		ret = 'failed'
+		data = json.loads(request.data.decode('utf-8'))
+		if db.setUserData(user, 'times', data['flag'], data['time']):
+			ret = 'accept'
 		return { 'return': ret }
 
 api.add_resource(Time, '/time/<string:user>')
@@ -64,20 +98,43 @@ class Score(Resource):
 		return db.getOrderTable('scores', 'score')
 
 	def put(self):
+		if (not request.args.getlist('token') or not request.data):
+			return { 'return': 'require more(less) argument' }
+		token = request.args.getlist('token')[0]
+		if not token in tokens.values():
+			return { 'return': 'Invalidate access' }
 		db.newScoreData(json.loads(request.data.decode('utf-8')), timestamp())
-		return { 'return': "x" }
+		return { 'return': "updated" }
 
 api.add_resource(Score, '/score')
 
 class Users(Resource):
 
 	def get(self):
-		return db.getUsers()
+		user = request.args.getlist('user')
+		if (user):
+			return db.getUserTable(user, 'users')
+		users = db.getUsers()
+		view = []
+		for user in users:
+			name = user['user']
+			view.append({ name : hasToken(name) and "Login" or "Logout"})
+		return view
 	
 	def put(self):
-		if not db.newUserData(request.args.getlist('user')[0], timestamp()):
-			return { 'return' : 'failed' }
-		return { 'return': 'accept' }
+		user = request.args.getlist('user')[0]
+		client = request.args.getlist('client')[0]
+		flag = request.args.getlist('flag')[0]
+
+		if not db.newUserData(user, timestamp()):
+			if client != "application/sort":
+				return { 'return' : 'failed'}
+
+		if flag == 'login':
+			return { 'return': flag, 'token': getToken(user) }
+		outToken(user)
+		return { 'return': flag }
+
 
 api.add_resource(Users, '/users')
 
