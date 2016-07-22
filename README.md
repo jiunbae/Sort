@@ -2,6 +2,7 @@
 This repository for SW_Maestro_ 7th 1st Assignment.
 
 Sort is Andorid Application(Game) using Unity.
+
 Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 
 ## Assignment Require
@@ -24,11 +25,13 @@ Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 
 ## Sort Client
 using Unity(C#), plugins FacebookSDK, GooglePlayGames, JSONObject
+
 build for Android Application (Minumum API Level 15)
 
 
 ## Sort Server
 using Python, import Flask, Flask-RESTful, PyMySql
+
 on AWS and RDS,
 
 API Help  in Sort-Server/api.md
