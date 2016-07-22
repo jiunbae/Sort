@@ -13,7 +13,7 @@ public class Global : MonoBehaviour {
     public static bool isLogin = false, isGuest = true, isLeveling = false;
 
     public static string PlayerName = "", LoginType = "Guest", Level = "Sort";
-    private static string Logintoken, scene;
+    private static string Logintoken, ServerToken, scene;
 
     public static STATE State = STATE.loading;
     public static  MODE mode = MODE.classic;
@@ -92,8 +92,13 @@ public class Global : MonoBehaviour {
             PlayerName = "Guest";
         }
         else
+        {
             isGuest = false;
-        
+        }
+
+        PlayerName = Network.Login();
+
+        UserDialog.setUserName(PlayerName);
         LoginDialog.Popdown();
         MenuDialog.Popup();
     }
@@ -114,12 +119,15 @@ public class Global : MonoBehaviour {
                 GoogleLogin.GetInstance().Logout();
             }
         }
+        
+        Network.Logout();
 
         isLogin = false;
         LoginType = "Guest";
         PlayerName = "";
         Logintoken = "";
-        
+
+        UserDialog.delUserName();
         LoginDialog.Popup();
         MenuDialog.Popdown();
     }

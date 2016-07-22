@@ -1,17 +1,6 @@
 #!/usr/bin/python
-import MySQLdb
-
-"""
-server = 'sort.cwinx5koe02z.ap-northeast-2.rds.amazonaws.com'
-user = "SortAdmin"
-passwd = "jiun062#"
-db_name = 'sort'
-"""
-server = 'localhost'
-user = "SortAdmin"
-passwd = "Sorted1234"
-db_name = 'sort'
-
+import pymysql
+from info_local import *
 
 def dictfetchall(cursor):
     """Returns all rows from a cursor as a list of dicts"""
@@ -31,13 +20,13 @@ def isTable(table):
 
 class database():
 	def __init__(self):
-		self.db = MySQLdb.connect(server, user, passwd, db_name)
+		self.db = pymysql.connect(server, user, passwd, db_name)
 		self.cursor = self.db.cursor()
 
 	def getCursor(self):
 		if self.db.open:
 			self.db.close()
-			self.db = MySQLdb.connect(server, user, passwd, db_name)
+			self.db = pymysql.connect(server, user, passwd, db_name)
 		self.cursor = self.db.cursor()
 		return self.cursor
 
@@ -52,6 +41,8 @@ class database():
 		return dictfetchall(cursor)
 
 	def getUserID(self, user):
+		if (not self.isUser(user)):
+			return None
 		cursor = self.getCursor()
 		cursor.execute("SELECT id FROM users WHERE user=\"%s\"" % user)
 		return cursor.fetchone()[0]
@@ -63,9 +54,9 @@ class database():
 			cursor = self.getCursor()
 			cursor.execute("SELECT %s FROM %s WHERE user = \"%s\"" % (column, table, user))
 			return dictfetchall(cursor)
+		id = self.getUserID(user)
+		cursor = self.getCursor()
 		try:
-			id = self.getUserID(user)
-			cursor = self.getCursor()
 			cursor.execute("SELECT %s FROM %s WHERE user = %d" % (column, table, id))
 		except:
 			return False
@@ -74,9 +65,9 @@ class database():
 	def getUserTable(self, user, table):
 		if not (isTable(table)):
 			return False
+		id = self.getUserID(user)
+		cursor = self.getCursor()
 		try:
-			id = self.getUserID(user)
-			cursor = self.getCursor()
 			cursor.execute("SELECT * FROM %s WHERE user=%d" % (table, id))
 		except:
 			return False
@@ -95,9 +86,9 @@ class database():
 	def setUserData(self, user, table, column, value):
 		if not (isTable(table) and isColumn(table, column)):
 			return False
+		id = self.getUserID(user)
+		cursor = self.getCursor()
 		try:
-			id = self.getUserID(user)
-			cursor = self.getCursor()
 			cursor.execute("UPDATE %s SET %s=\"%s\" WHERE user=%d" % (table, column, value, id))
 			self.db.commit()
 		except:
@@ -118,17 +109,49 @@ class database():
 		id = self.getUserID(data['name'])
 		cursor = self.getCursor()
 		try:
-			text = "INSERT INTO scores (user, score, move, time, clear, init, mode) VALUES ( %d, %d, %d, %d, %d, \"%s\", \"%s\" )" % (id, data['score'], data['move'], data['time'], data['clear'], timestamp, data['mode'])
-			cursor.execute(text)
+			cursor.execute("INSERT INTO scores (user, score, move, time, clear, init, mode) VALUES ( %d, %d, %d, %d, %d, \"%s\", \"%s\" )" % (id, data['score'], data['move'], data['time'], data['clear'], timestamp, data['mode']))
 			self.db.commit()
 		except:
 			self.db.rollback()
+
+	def newGuest(self, user):
+		cursor = self.getCursor()
+		try:
+			cursor.execute("INSERT INTO guests (name) VALUES (\"%s\")" % user)
+			self.db.commit()
+		except:
+			self.db.rollback()		
+
+	def getGuests(self):
+		cursor = self.getCursor()
+		cursor.execute("SELECT * FROM guests")
+		return dictfetchall(cursor)
+
+	def delUserData(self, user):
+		if not self.isUser(user):
+			return False
+		id = self.getUserID(user)
+		#try:
+		cursor = self.getCursor()
+		cursor.execute("DELETE FROM users WHERE id=%d" % id)
+		self.db.commit()
+		cursor = self.getCursor()
+		cursor.execute("DELETE FROM times WHERE user=%d" % id)
+		self.db.commit()
+		cursor = self.getCursor()
+		cursor.execute("DELETE FROM scores WHERE user=%d" % id)
+		self.db.commit()
+		cursor = self.getCursor()
+		cursor.execute("DELETE FROM guests WHERE name=\"%s\"" % user)
+		self.db.commit()
+		#except:
+		#	self.db.rollback()
+		return True
 
 	def newUserData(self, user, timestamp):
 		if self.isUser(user):
 			return False
 		cursor = self.getCursor()
-		id = False
 		try:
 			cursor.execute("INSERT INTO users (user, init) VALUES (\"%s\", \"%s\")" % (user, timestamp))
 			self.db.commit()
@@ -144,7 +167,7 @@ class database():
 		return id
 
 if __name__ == "__main__":
-	db = MySQLdb.connect(server, user, passwd, db_name)
+	db = pymysql.connect(server, user, passwd, db_name)
 	cursor = db.cursor()
 	cursor.execute("SELECT VERSION()")
 

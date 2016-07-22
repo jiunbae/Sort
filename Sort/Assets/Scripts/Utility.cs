@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Utility : MonoBehaviour {
     public static float accuracy = 0.00001f;
@@ -16,6 +15,18 @@ public class Utility : MonoBehaviour {
     public static string fill(string str, int toSize, char filler = '0')
     {
         return (new string(filler, toSize)).Substring(0, toSize - str.Length) + str;
+    }
+
+    public static string cut(string str)
+    {
+        if (str[0] == '\"')
+            return str.Substring(1, str.Length - 2);
+        return str;
+    }
+
+    public static string timestamp()
+    {
+        return System.DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
     }
 
     public static bool moveSmooth(Transform transform, Vector3 destination, float step = 0.1f)

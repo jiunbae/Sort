@@ -1,6 +1,7 @@
 import json
 import time
 import hashlib
+from random import randrange
 from flask import Flask, request, make_response, render_template
 from flask_restful import Resource, Api
 from sort_db import database
@@ -25,16 +26,6 @@ class SortAPIHelp(Resource):
 
 api.add_resource(SortAPIHelp, '/')
 
-data_empty = {
-	"_USER_ID": "VALUE",
-	"_USER_INIT" : "VALUE",
-	"_APP_INSTALL" : "VALUE",
-	"_APP_START" : "VALUE",
-	"_APP_END" : "VALUE",
-	"_GAME_START" : "VALUE",
-	"_GAME_END" : "VALUE"
-}
-
 db = database()
 datas = {}
 
@@ -48,6 +39,25 @@ class Admin(Resource):
 api.add_resource(Admin, '/admin')
 
 tokens = {}
+
+def outGuest():
+	guests = db.getGuests()
+	if (not guests):
+		return
+	for guest in guests:
+		name = guest['name']
+		if not name in tokens:
+			db.delUserData(name)
+
+def newGuest():
+	outGuest()
+	name = "Guest"
+	while True:
+		name += str(randrange(0, 10))
+		if not name in tokens:
+			break
+	db.newGuest(name)
+	return name;
 
 def timestamp():
 	now = time.localtime()
@@ -86,6 +96,7 @@ class Time(Resource):
 			return { 'return': 'Invalidate access' }
 		ret = 'failed'
 		data = json.loads(request.data.decode('utf-8'))
+		print(data)
 		if db.setUserData(user, 'times', data['flag'], data['time']):
 			ret = 'accept'
 		return { 'return': ret }
@@ -122,21 +133,30 @@ class Users(Resource):
 		return view
 	
 	def put(self):
+		if not (request.args.getlist('user') and request.args.getlist('client') and request.args.getlist('flag')):
+			return { 'return' : 'Invalidate access'}
 		user = request.args.getlist('user')[0]
 		client = request.args.getlist('client')[0]
 		flag = request.args.getlist('flag')[0]
 
-		if not db.newUserData(user, timestamp()):
-			if client != "application/sort":
-				return { 'return' : 'failed'}
 
 		if flag == 'login':
-			return { 'return': flag, 'token': getToken(user) }
-		outToken(user)
-		return { 'return': flag }
+			if user == "GueGuest":
+				user = newGuest();
+			else:
+				user = user[3:]
 
+			if not db.newUserData(user, timestamp()):
+				if client != "application/sort":
+					return { 'return' : 'failed'}
+			return { 'return': flag, 'token': getToken(user), 'name': user }
+		if flag == 'logout':
+			if tokens[user] == request.args.getlist('token')[0]:
+				outToken(user)
+				return { 'return': flag }
+		return { 'return' : 'Invalidate access'}
 
 api.add_resource(Users, '/users')
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5009)
+    app.run(debug=False, host='0.0.0.0', port=5009)

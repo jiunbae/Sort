@@ -8,8 +8,10 @@ using System.Collections.Generic;
 public class GamePlay : MonoBehaviour {
     public static GamePlay Instance;
 
-    public GameObject PlayParent;
-    public Text CountText;
+    public GameObject PlayParent, EndParent;
+    public Text CountText, ScoreText;
+
+    public Image Normal, Select, Change;
 
     Button Clicked;
     GameObject ReadArray, PlayArray, OverArray;
@@ -19,8 +21,8 @@ public class GamePlay : MonoBehaviour {
     //게임 시작까지 대기 시간
     int count = 3;
 
-        //카운팅 끝내는 중,   카운팅 끝,            첫 Array
-    bool isPoping = false, isCountOver = false, isFirst = true,
+        //카운팅 끝내는 중,   카운팅 끝,            끝나는중,           첫 Array
+    bool isPoping = false, isCountOver = false, isEnding = false, isFirst = true,
         //게임플레이중,       Array 내려오는 중,  Array 내려가는 중
         isPlaying = false, isDowning = false, isFining = false,
         //클릭했을시,        박스 벌리기,      박스 벌리는 중,      박스 좁히는 중
@@ -65,6 +67,13 @@ public class GamePlay : MonoBehaviour {
             StartCoroutine("ArraySize");
         else
             StopCoroutine("ArraySize");
+
+        if (isEnding)
+        {
+            StartCoroutine("GameEnding");
+        }
+        else
+            StopCoroutine("GameEnding");
 
     }
 
@@ -154,6 +163,7 @@ public class GamePlay : MonoBehaviour {
                         Utility.toPPIXScale(ARRAY_NARROWED[index]),
                         btn.transform.position.y,
                         btn.transform.position.z);
+                    btn.GetComponentInChildren<Image>().sprite = Normal.sprite;
                     cnt++;
                 }
             }
@@ -162,10 +172,9 @@ public class GamePlay : MonoBehaviour {
             {
                 isWide = false;
                 isNarrowing = false;
+
                 if (isSorted(Instance.PlayArrayInt))
                 {
-                    // add here:
-                    GamePlayUI.GetInstance().Sorted();
                     Instance.ArrayNext();
                 }
                 yield break;
@@ -173,6 +182,19 @@ public class GamePlay : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(.001f);
+    }
+    IEnumerator GameEnding()
+    {
+        if (Utility.moveSmooth(EndParent.transform, new Vector3(
+            EndParent.transform.position.x, 1.0f, EndParent.transform.position.z)))
+        {
+            EndParent.transform.position = new Vector3(
+              EndParent.transform.position.x, 1.0f, EndParent.transform.position.z);
+
+            isEnding = false;
+            yield break;
+        }
+        yield return new WaitForSeconds(0.01f);
     }
 
     void DisplayText(string text)
@@ -198,14 +220,20 @@ public class GamePlay : MonoBehaviour {
         // add here: network - game start point
         Global.State = Global.STATE.playing;
         GamePlayUI.GetInstance().StartTimer();
+        Network.GameStart();
         isPlaying = true;
         isFirst = true;
         ArrayNext();
     }
 
-    public void EndGame()
+    public void EndGame(JSONObject json)
     {
-
+        ScoreText.text = json.GetField("score").ToString();
+        isEnding = true;
+        isPlaying = false;
+        ArrayOver();
+        Network.NewScore(json);
+        Network.GameEnd();
     }
 
     private void Popup()
@@ -252,6 +280,7 @@ public class GamePlay : MonoBehaviour {
         GameObject Array = Instantiate(reference) as GameObject;
         
         MinSwapSize = GetMinSwapSize(PlayArrayInt = CreateSwapedArray());
+        GamePlayUI.GetInstance().minMove += MinSwapSize;
 
         Button[] Arrays = Array.GetComponentsInChildren<Button>();
         for (int i = 0; i < Arrays.Length; ++i)
@@ -280,6 +309,9 @@ public class GamePlay : MonoBehaviour {
         string text = tar.name;
         tar.name = Clicked.name;
         Clicked.name = text;
+
+        if (isSorted(Instance.PlayArrayInt))
+            GamePlayUI.GetInstance().Sorted();
     }
 
     public static void OnClick(Button btn)
@@ -289,15 +321,22 @@ public class GamePlay : MonoBehaviour {
             Instance.isClicked = true;
             Instance.isWiding = true;
             Instance.Clicked = btn;
+            btn.GetComponentInChildren<Image>().sprite = Instance.Select.sprite;
         }
         else
         {
-            if (btn.name != Instance.Clicked.name)
-                GamePlayUI.GetInstance().Move();
-
             Instance.ButtonSwap(btn);
             Instance.isClicked = false;
             Instance.isNarrowing = true;
+
+            if (btn.name != Instance.Clicked.name)
+            {
+                btn.GetComponentInChildren<Image>().sprite = Instance.Change.sprite;
+                GamePlayUI.GetInstance().Move();
+            }
+            else
+                Instance.Clicked.GetComponentInChildren<Image>().sprite = Instance.Normal.sprite;
+
             Instance.Clicked = null;
         }
     }
@@ -330,7 +369,7 @@ public class GamePlay : MonoBehaviour {
 
     public static int[] CreateSwapedArray(int low = 1, int high = 9, int size = 6)
     {
-        int swap_size = 3;
+        int swap_size = Utility.random.Next(3, 10);
         int[] ret = CreateSortedArray(low, high, size);
 
         do {

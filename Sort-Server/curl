@@ -1,9 +1,0 @@
-curl http://127.0.0.1:5009/Time -H "Content-Type: application/json" -X PUT -d 
-'{"User":"123123", "Flag": "INSTALL", "Time": "2015-04-23 23:24:11"}'
-
-
-curl -X PUT -H "Content-Type:application/json" http://127.0.0.1:5009/Time -d '{"title":"xxxx","inkOnPodcastpedia":"Naked-Scientists","description":"eee"}'
-    
-
-    
-curl -X PUT -H "Content-Type:application/json" http://127.0.0.1:5009/Time -d '{"title":"xxxx","inkOnPodcastpedia":"Naked-Scientists","description":"eee"}'

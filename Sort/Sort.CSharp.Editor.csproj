@@ -142,6 +142,7 @@
     <Compile Include="Assets\GooglePlayGames\Editor\xcode\Sections.cs" />
     <Compile Include="Assets\GooglePlayGames\Editor\xcode\Serializer.cs" />
     <Compile Include="Assets\GooglePlayGames\Editor\xcode\Utils.cs" />
+    <Compile Include="Assets\JSON\Editor\JSONChecker.cs" />
     <Compile Include="Assets\PlayServicesResolver\Editor\DefaultResolver.cs" />
     <Compile Include="Assets\PlayServicesResolver\Editor\IResolver.cs" />
     <Compile Include="Assets\PlayServicesResolver\Editor\PlayServicesResolver.cs" />
@@ -157,6 +158,7 @@
     <None Include="Assets\GooglePlayGames\Editor\template-AndroidManifest.txt" />
     <None Include="Assets\GooglePlayGames\Editor\template-Constants.txt" />
     <None Include="Assets\GooglePlayGames\Editor\template-GameInfo.txt" />
+    <None Include="Assets\JSON\readme.txt" />
     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\Plugins\Android\MainLibProj\AndroidManifest.xml" />
   </ItemGroup>
