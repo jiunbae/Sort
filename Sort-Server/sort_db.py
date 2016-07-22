@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pymysql
-from info_local import *
+from info_rds import *
 
 def dictfetchall(cursor):
     """Returns all rows from a cursor as a list of dicts"""
@@ -20,13 +20,13 @@ def isTable(table):
 
 class database():
 	def __init__(self):
-		self.db = pymysql.connect(server, user, passwd, db_name)
+		self.db = pymysql.connect(server, user, passwd, db_name, charset="utf8")
 		self.cursor = self.db.cursor()
 
 	def getCursor(self):
 		if self.db.open:
 			self.db.close()
-			self.db = pymysql.connect(server, user, passwd, db_name)
+			self.db = pymysql.connect(server, user, passwd, db_name, charset="utf8")
 		self.cursor = self.db.cursor()
 		return self.cursor
 
@@ -167,7 +167,7 @@ class database():
 		return id
 
 if __name__ == "__main__":
-	db = pymysql.connect(server, user, passwd, db_name)
+	db = pymysql.connect(server, user, passwd, db_name, charset="utf8")
 	cursor = db.cursor()
 	cursor.execute("SELECT VERSION()")
 

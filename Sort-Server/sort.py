@@ -57,7 +57,7 @@ def newGuest():
 		if not name in tokens:
 			break
 	db.newGuest(name)
-	return name;
+	return name
 
 def timestamp():
 	now = time.localtime()
@@ -84,10 +84,6 @@ class Time(Resource):
 	def get(self, user):
 		return db.getUserTable(user, 'times')
 
-	""" put request json {
-			"flag": "FLAG_VALUE",
-			"time": "TIME_VALUE"	
-		}"""
 	def put(self, user):
 		if (not request.args):
 			return { 'return': 'require more(less) argument' }
@@ -96,7 +92,6 @@ class Time(Resource):
 			return { 'return': 'Invalidate access' }
 		ret = 'failed'
 		data = json.loads(request.data.decode('utf-8'))
-		print(data)
 		if db.setUserData(user, 'times', data['flag'], data['time']):
 			ret = 'accept'
 		return { 'return': ret }
@@ -123,6 +118,7 @@ class Users(Resource):
 
 	def get(self):
 		user = request.args.getlist('user')
+		print(user)
 		if (user):
 			return db.getUserTable(user, 'users')
 		users = db.getUsers()
@@ -135,22 +131,20 @@ class Users(Resource):
 	def put(self):
 		if not (request.args.getlist('user') and request.args.getlist('client') and request.args.getlist('flag')):
 			return { 'return' : 'Invalidate access'}
-		user = request.args.getlist('user')[0]
 		client = request.args.getlist('client')[0]
+		user = request.args.getlist('user')[0]
+		if client != "Guest":
+			user = str(user.encode('utf-8'))
 		flag = request.args.getlist('flag')[0]
 
-
 		if flag == 'login':
-			if user == "GueGuest":
+			if client == "Guest":
 				user = newGuest();
-			else:
-				user = user[3:]
-
-			if not db.newUserData(user, timestamp()):
-				if client != "application/sort":
-					return { 'return' : 'failed'}
-			return { 'return': flag, 'token': getToken(user), 'name': user }
+			db.newUserData(user, timestamp())
+			return { 'return': flag, 'token': getToken(user), 'name': user  }
 		if flag == 'logout':
+			if client == "Guest":
+				print(user)
 			if tokens[user] == request.args.getlist('token')[0]:
 				outToken(user)
 				return { 'return': flag }
@@ -159,4 +153,4 @@ class Users(Resource):
 api.add_resource(Users, '/users')
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=5009)
+    app.run(debug=True, host='0.0.0.0', port=5009)
