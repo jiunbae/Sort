@@ -355,6 +355,7 @@
     <Compile Include="Assets\Scripts\Buttons.cs" />
     <Compile Include="Assets\Scripts\Dialog\LoginDialog.cs" />
     <Compile Include="Assets\Scripts\Dialog\MenuDialog.cs" />
+    <Compile Include="Assets\Scripts\Dialog\RankDialog.cs" />
     <Compile Include="Assets\Scripts\Dialog\UserDialog.cs" />
     <Compile Include="Assets\Scripts\GamePlay.cs" />
     <Compile Include="Assets\Scripts\GamePlayUI.cs" />

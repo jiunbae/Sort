@@ -87,6 +87,9 @@ class Time(Resource):
 	def put(self, user):
 		if (not request.args):
 			return { 'return': 'require more(less) argument' }
+		client = request.args.getlist('client')[0]
+		if client != "Guest":
+			user = str(user.encode('utf-8'))
 		token = request.args.getlist('token')[0]
 		if not token in tokens.values():
 			return { 'return': 'Invalidate access' }

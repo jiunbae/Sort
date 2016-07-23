@@ -16,8 +16,8 @@ CREATE TABLE `sort`.`scores` (
 CREATE TABLE `sort`.`times` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`user` INT NOT NULL,
-	`game_start` varchar(20) NOT NULL,
-	`game_end` varchar(20) NOT NULL,
+	`game_start` varchar(20) NOT NULL DEFAULT "0000-00-00 00:00:00",
+	`game_end` varchar(20) NOT NULL DEFAULT "0000-00-00 00:00:00",
 	`app_start` varchar(20) NOT NULL,
   PRIMARY KEY (`id`));
 CREATE TABLE `sort`.`guests` (
