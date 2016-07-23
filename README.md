@@ -22,6 +22,9 @@ Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 - ~~develope app for both Android and iOS~~
 - CMS for DB
 
+## [Google Play Store](https://play.google.com/store/apps/details?id=com.MaybeStudio.Sort)
+You can download release version in Google Play Store.
+
 
 ## [Sort Client](https://github.com/MaybeS/Sort/blob/master/Sort/README.md)
 using Unity(C#), plugins FacebookSDK, GooglePlayGames, JSONObject
