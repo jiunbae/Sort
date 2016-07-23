@@ -82,6 +82,8 @@ def outToken(user):
 class Time(Resource):
 	
 	def get(self, user):
+		guests = db.getGuests()
+		print(guests)
 		return db.getUserTable(db.getUserID(str(user.encode('utf-8'))), 'times')
 
 	def put(self, user):
