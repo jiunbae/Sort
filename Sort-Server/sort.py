@@ -101,7 +101,7 @@ api.add_resource(Time, '/time/<string:user>')
 class Score(Resource):
 
 	def get(self):
-		return db.getOrderTable('scores', 'score')
+		return db.getOrderTable('scores', 'score')[0]
 
 	def put(self):
 		if (not request.args.getlist('token') or not request.data):
