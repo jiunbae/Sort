@@ -117,10 +117,9 @@ api.add_resource(Score, '/score')
 class Users(Resource):
 
 	def get(self):
-		user = request.args.getlist('user')
-		print(user)
+		id = request.args.getlist('id')
 		if (user):
-			return db.getUserTable(user, 'users')
+			return db.getUserTable(id, 'users')
 		users = db.getUsers()
 		view = []
 		for user in users:

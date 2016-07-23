@@ -40,6 +40,11 @@ class database():
 		cursor.execute("SELECT * FROM users")
 		return dictfetchall(cursor)
 
+	def getUsername(self, id):
+		cursor = self.getCursor()
+		cursor.execute("SELECT user FROM users WHERE id=%d" % id)
+		return cursor.fetchone()[0]
+
 	def getUserID(self, user):
 		if (not self.isUser(user)):
 			return None
@@ -62,13 +67,12 @@ class database():
 			return False
 		return dictfetchall(cursor)
 
-	def getUserTable(self, user, table):
+	def getUserTable(self, id, table):
 		if not (isTable(table)):
 			return False
-		id = self.getUserID(user)
 		cursor = self.getCursor()
 		try:
-			cursor.execute("SELECT * FROM %s WHERE user=%d" % (table, id))
+			cursor.execute("SELECT * FROM %s WHERE id=%d" % (table, id))
 		except:
 			return False
 		return dictfetchall(cursor)
