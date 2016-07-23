@@ -17,10 +17,21 @@ public class Utility : MonoBehaviour {
         return (new string(filler, toSize)).Substring(0, toSize - str.Length) + str;
     }
 
+    public static string erase(string str)
+    {
+        string ret = "";
+        foreach (char c in str)
+            if (c != 10 && c != 32)
+                ret += c;
+        return ret;
+    }
+
     public static string cut(string str)
     {
         if (str[0] == '\"')
-            return str.Substring(1, str.Length - 2);
+            str = str.Substring(1, str.Length - 2);
+        if (str[0] == 'b' && str[1] == '\'')
+            str = str.Substring(2, str.Length - 3);
         return str;
     }
 

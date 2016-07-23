@@ -33,7 +33,14 @@ public class Network : MonoBehaviour {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
         System.IO.Stream response = request.GetResponse().GetResponseStream();
         System.IO.StreamReader reader = new System.IO.StreamReader(response);
-        JSONObject json = new JSONObject(reader.ReadLine());
+        string result = reader.ReadToEnd();
+        string res = Utility.erase(result);
+        JSONObject json = new JSONObject(res.Substring(1, res.Length-2));
+        if (!json)
+            return null;
+        string x = json.GetField("user").ToString();
+        Debug.Log(x);
+
         return Utility.cut(json.GetField("user").ToString());
     }
 
@@ -44,10 +51,14 @@ public class Network : MonoBehaviour {
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
         System.IO.Stream response = request.GetResponse().GetResponseStream();
         System.IO.StreamReader reader = new System.IO.StreamReader(response);
+        
+        string result = reader.ReadToEnd();
+        if (result.Length < 3)
+            return null;
+        string res = Utility.erase(result);
+        res = res.Substring(2, res.Length - 4);
 
-        string result = reader.ReadLine();
-        result = result.Substring(2, result.Length - 4);
-        string[] table = result.Split(new string[] { "}, {" }, System.StringSplitOptions.None);
+        string[] table = res.Split(new string[] { "},{" }, System.StringSplitOptions.None);
         int size = System.Math.Min(table.Length, max_size);
         JSONObject[] jsons = new JSONObject[size];
         foreach (string data in table)
@@ -143,6 +154,7 @@ public class Network : MonoBehaviour {
     {
         string url = server + "time/" + Global.PlayerName;
         url += "?token=" + token;
+        url += "&client=" + Global.LoginType;
 
         JSONObject json = new JSONObject();
         json.AddField("flag", flag);

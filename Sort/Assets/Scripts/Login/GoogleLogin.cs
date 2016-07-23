@@ -26,7 +26,7 @@ public class GoogleLogin : MonoBehaviour {
             PlayGamesPlatform.Instance.Authenticate(GLogin);
         else
         {
-            Debug.Log("google login failed");
+
         }
     }
 

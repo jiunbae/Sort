@@ -9,7 +9,7 @@ public class GamePlay : MonoBehaviour {
     public static GamePlay Instance;
 
     public GameObject PlayParent, EndParent;
-    public Text CountText, ScoreText;
+    public Text CountText, ScoreText, Debugs;
 
     public Image Normal, Select, Change;
 
@@ -283,7 +283,6 @@ public class GamePlay : MonoBehaviour {
         
         MinSwapSize = GetMinSwapSize(PlayArrayInt = CreateSwapedArray());
         GamePlayUI.GetInstance().minMove += MinSwapSize;
-
         Button[] Arrays = Array.GetComponentsInChildren<Button>();
         for (int i = 0; i < Arrays.Length; ++i)
         {

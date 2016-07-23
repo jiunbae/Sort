@@ -11,8 +11,7 @@ public class RankDialog : MonoBehaviour {
 
 	void Start ()
     {
-        Instance = this;
-        refresh();        
+        Instance = this; 
     }
 	
     public void init()
@@ -23,13 +22,15 @@ public class RankDialog : MonoBehaviour {
     public void refresh()
     {
         JSONObject[] jsons = Network.getScore();
-        
+        Debug.Log(jsons);
+        if (jsons == null)
+            return;
         for (int i = 0; i < jsons.Length; ++i)
         {
             GameObject reference = Resources.Load("Prefabs/Scores") as GameObject;
             GameObject Scores = Instantiate(reference) as GameObject;
             Scores.transform.position = new Vector3(
-                Scores.transform.position.x, i * -150.0f, Scores.transform.position.z);
+                Scores.transform.position.x, -600.0f - (i * -150.0f), Scores.transform.position.z);
 
             Text[] texts = Scores.GetComponentsInChildren<Text>();
             for(int j = 0; j < texts.Length; ++j)
@@ -58,6 +59,7 @@ public class RankDialog : MonoBehaviour {
 
     void Popup()
     {
+        refresh();
         isPoping = true;
         toPopup = true;
     }

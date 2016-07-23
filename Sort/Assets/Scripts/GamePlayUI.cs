@@ -61,6 +61,8 @@ public class GamePlayUI : MonoBehaviour
 
     private void Over()
     {
+        if (GameTimeStart - (GameTime / 100) < 0)
+            GameTimeStart = GameTime / 100;
         isPlay = false;
         int score = Score((int)GameMove, (int)GameClear, (int)(GameTimeStart == 0 ? (GameTime / 100) : GameTimeStart - (GameTime / 100)), minMove);
         GamePlay.GetInstance().EndGame(pack(score, (int)GameMove, (int)GameClear, (int)(GameTimeStart == 0 ? (GameTime / 100) : GameTimeStart - (GameTime / 100))));
@@ -121,8 +123,10 @@ public class GamePlayUI : MonoBehaviour
 
         TimeText.text = Utility.fill(
             (GameTimeStart == 0 ? (GameTime / 100) : GameTimeStart - (GameTime / 100)).ToString(), 3);
+
         if (TimeText.text.Length > 3)
             TimeText.text = "999";
+        
     }
 
     public static GamePlayUI GetInstance()
