@@ -106,9 +106,10 @@ class database():
 		return value
 
 	def newScoreData(self, data, timestamp):
-		if not self.isUser(data['name']):
+		user = str(data['name'].encode('utf-8'))
+		if not self.isUser(user):
 			return False
-		id = self.getUserID(data['name'])
+		id = self.getUserID(user)
 		cursor = self.getCursor()
 		try:
 			cursor.execute("INSERT INTO scores (user, score, move, time, clear, init, mode) VALUES ( %d, %d, %d, %d, %d, \"%s\", \"%s\" )" % (id, data['score'], data['move'], data['time'], data['clear'], timestamp, data['mode']))
