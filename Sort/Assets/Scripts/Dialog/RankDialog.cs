@@ -9,6 +9,8 @@ public class RankDialog : MonoBehaviour {
 
     bool isPoping = false, isPopup = false, toPopup = false;
 
+    private GameObject[] NowScores;
+
 	void Start ()
     {
         Instance = this; 
@@ -22,16 +24,19 @@ public class RankDialog : MonoBehaviour {
     public void refresh()
     {
         JSONObject[] jsons = Network.getScore();
-        Debug.Log(jsons);
+
         if (jsons == null)
             return;
+
+        NowScores = new GameObject[jsons.Length];
         for (int i = 0; i < jsons.Length; ++i)
         {
             GameObject reference = Resources.Load("Prefabs/Scores") as GameObject;
             GameObject Scores = Instantiate(reference) as GameObject;
             Scores.transform.position = new Vector3(
-                Scores.transform.position.x, -600.0f - (i * -150.0f), Scores.transform.position.z);
+                Scores.transform.position.x, i * -150.0f, Scores.transform.position.z);
 
+            NowScores[i] = Scores;
             Text[] texts = Scores.GetComponentsInChildren<Text>();
             for(int j = 0; j < texts.Length; ++j)
                 texts[j].text = Utility.cut(jsons[i].GetField(texts[j].name).ToString());
@@ -80,6 +85,12 @@ public class RankDialog : MonoBehaviour {
 
             isPoping = false;
             isPopup = toPopup;
+
+            if(!isPopup)
+            {
+                foreach (GameObject child in NowScores)
+                    Destroy(child);
+            }
 
         }
 

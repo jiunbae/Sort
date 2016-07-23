@@ -39,7 +39,6 @@ public class Network : MonoBehaviour {
         if (!json)
             return null;
         string x = json.GetField("user").ToString();
-        Debug.Log(x);
 
         return Utility.cut(json.GetField("user").ToString());
     }

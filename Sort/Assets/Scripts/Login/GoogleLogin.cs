@@ -40,8 +40,6 @@ public class GoogleLogin : MonoBehaviour {
 
     void Initilize()
     {
-
-        PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
         isInitilized = true;
     }
