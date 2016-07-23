@@ -119,7 +119,7 @@ class Users(Resource):
 	def get(self):
 		id = request.args.getlist('id')
 		if (id):
-			return db.getUserTable(id, 'users')
+			return db.getUserTable(int(id[0]), 'users')
 		users = db.getUsers()
 		view = []
 		for user in users:

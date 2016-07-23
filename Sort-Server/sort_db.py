@@ -71,10 +71,8 @@ class database():
 		if not (isTable(table)):
 			return False
 		cursor = self.getCursor()
-		try:
-			cursor.execute("SELECT * FROM %s WHERE id=%d" % (table, id))
-		except:
-			return False
+		cursor.execute("SELECT * FROM %s WHERE id=%d" % (table, id))
+		#return False
 		return dictfetchall(cursor)
 
 	def getOrderTable(self, table, column, increse=True):
