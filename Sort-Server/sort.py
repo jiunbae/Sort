@@ -82,7 +82,7 @@ def outToken(user):
 class Time(Resource):
 	
 	def get(self, user):
-		return db.getUserTable(user, 'times')
+		return db.getUserTable(db.getUserID(str(user.encode('utf-8'))), 'times')
 
 	def put(self, user):
 		if (not request.args):
@@ -145,8 +145,7 @@ class Users(Resource):
 			db.newUserData(user, timestamp())
 			return { 'return': flag, 'token': getToken(user), 'name': user  }
 		if flag == 'logout':
-			if client == "Guest":
-				print(user)
+			print(user)		
 			if tokens[user] == request.args.getlist('token')[0]:
 				outToken(user)
 				return { 'return': flag }
