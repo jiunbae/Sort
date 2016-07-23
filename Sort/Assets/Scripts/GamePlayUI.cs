@@ -41,9 +41,7 @@ public class GamePlayUI : MonoBehaviour
 
     private static int Score(int move, int clear, int time, int min)
     {
-        Debug.Log("" + move + ","+ clear + "," + time + "," + min);
         int score = (clear * 100 - (int)(System.Math.Log(move - min + 25) * 10) - time * 10) / 8;
-        Debug.Log(score);
         if (score < 0)
             score = 0;
         

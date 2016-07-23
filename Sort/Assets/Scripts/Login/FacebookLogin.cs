@@ -9,6 +9,7 @@ public class FacebookLogin : MonoBehaviour {
     public static FacebookLogin instance;
 
     public static bool isInitilized = false;
+    AccessToken token;
 
     void Start()
     {
@@ -53,21 +54,31 @@ public class FacebookLogin : MonoBehaviour {
         FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, AuthCallback);
     }
 
+    IEnumerator LoginEnumerator()
+    {
+        string name = "";
+        bool finish = false;
+        
+        FB.API("/me?fields=first_name,last_name", HttpMethod.GET, delegate (IGraphResult APIResult) {
+            if (APIResult.ResultDictionary != null)
+            {
+                name = APIResult.ResultDictionary["first_name"].ToString() + APIResult.ResultDictionary["last_name"].ToString();
+                finish = true;
+                UserDialog.setUserName("xxx");
+                Global.GetInstance().Login("facebook", name, token.TokenString);
+            }
+        });
+
+        while (!finish)
+            yield return null;
+    }
+
     void AuthCallback(ILoginResult result)
     {
         if(FB.IsLoggedIn)
         {
-            var aToken = AccessToken.CurrentAccessToken;
-
-            string name = "";
-            FB.API("/me?fields=first_name,last_name", HttpMethod.GET, delegate (IGraphResult APIResult ) {
-                if (APIResult.ResultDictionary != null)
-                {
-                    name += APIResult.ResultDictionary["first_name"].ToString();
-                    name += APIResult.ResultDictionary["last_name"].ToString();
-                }
-            });
-            Global.GetInstance().Login("facebook", name, aToken.TokenString);
+            token = AccessToken.CurrentAccessToken;
+            StartCoroutine("LoginEnumerator");
         }
         else
         {

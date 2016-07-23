@@ -58,6 +58,11 @@ public class Buttons : MonoBehaviour
                     Global.mode = Global.MODE.timelimit;
                     break;
                 }
+            case "GameOverBg":
+                {
+                    Global.GetInstance().LoadLevel("Sort");
+                    break;
+                }
         }
     }
 }

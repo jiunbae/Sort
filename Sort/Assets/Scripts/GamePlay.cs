@@ -13,6 +13,8 @@ public class GamePlay : MonoBehaviour {
 
     public Image Normal, Select, Change;
 
+    public AudioSource ef_clear, ef_swap;
+
     Button Clicked;
     GameObject ReadArray, PlayArray, OverArray;
     int[] PlayArrayInt;
@@ -310,8 +312,13 @@ public class GamePlay : MonoBehaviour {
         tar.name = Clicked.name;
         Clicked.name = text;
 
+        ef_swap.PlayOneShot(ef_swap.clip);
+
         if (isSorted(Instance.PlayArrayInt))
+        {
             GamePlayUI.GetInstance().Sorted();
+            ef_clear.PlayOneShot(ef_clear.clip);
+        }
     }
 
     public static void OnClick(Button btn)
@@ -375,7 +382,7 @@ public class GamePlay : MonoBehaviour {
         do {
             for(int k = 0; k < swap_size; ++k)
             {
-                int i = Utility.random.Next(0, size - 1), j = Utility.random.Next(0, size - 1);
+                int i = Utility.random.Next(0, size), j = Utility.random.Next(0, size);
                 int temp = ret[i];
                 ret[i] = ret[j];
                 ret[j] = temp;

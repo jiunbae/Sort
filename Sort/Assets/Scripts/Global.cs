@@ -33,7 +33,10 @@ public class Global : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (Level == "Sort")
+            {
+                Logout();
                 Application.Quit();
+            }
             else if (Level == "Sort_play")
                 LoadLevel("Sort");
         }
@@ -55,6 +58,7 @@ public class Global : MonoBehaviour {
                 }
             case STATE.main_menu:
                 {
+                    RankDialog.GetInstance().init();
                     if (isLogin)
                         MenuDialog.Popup();
                     else
@@ -80,7 +84,7 @@ public class Global : MonoBehaviour {
     {
         if (State != STATE.main_menu && isLogin)
             return;
-
+        
         isLogin = true;
         LoginType = type;
         PlayerName = name;
@@ -96,8 +100,10 @@ public class Global : MonoBehaviour {
             isGuest = false;
         }
 
-        PlayerName = Network.Login();
-
+        string newname = Network.Login();
+        if (isGuest)
+            PlayerName = newname;
+        
         UserDialog.setUserName(PlayerName);
         LoginDialog.Popdown();
         MenuDialog.Popup();
