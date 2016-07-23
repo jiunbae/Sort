@@ -23,13 +23,13 @@ Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 - CMS for DB
 
 
-## Sort Client
+## [Sort Client](https://github.com/MaybeS/Sort/blob/master/Sort/README.md)
 using Unity(C#), plugins FacebookSDK, GooglePlayGames, JSONObject
 
 build for Android Application (Minumum API Level 15)
 
 
-## Sort Server
+## [Sort Server](https://github.com/MaybeS/Sort/blob/master/Sort-Server/README.md)
 using Python, import Flask, Flask-RESTful, PyMySql
 
 on AWS and RDS,
