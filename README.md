@@ -18,8 +18,8 @@ Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 - using Cloud
 - additional features, such as adding a friend, rankings, present
 - design RESTful API
-- implemente 'push'
-- develope app for both Android and iOS
+- ~~implemente 'push'~~
+- ~~develope app for both Android and iOS~~
 - CMS for DB
 
 
