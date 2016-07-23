@@ -82,9 +82,15 @@ def outToken(user):
 class Time(Resource):
 	
 	def get(self, user):
+		isGuest = False
 		guests = db.getGuests()
-		print(guests)
-		return db.getUserTable(db.getUserID(str(user.encode('utf-8'))), 'times')
+		for guest in guests:
+			if (guest['name'] == user):
+				isGuest = True
+				break
+		if not isGuest:
+			user = str(user.encode('utf-8'))
+		return db.getUserTable(db.getUserID(user), 'times')
 
 	def put(self, user):
 		if (not request.args):

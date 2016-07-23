@@ -35,6 +35,11 @@ class database():
 		cursor.execute("SELECT EXISTS (SELECT * FROM users WHERE user=\"%s\")" % user)
 		return cursor.fetchone()[0] == 1
 
+	def getGuests(self):
+		cursor = self.getCursor()
+		cursor.execute("SELECT * FROM guests")
+		return dictfetchall(cursor)
+
 	def getUsers(self):
 		cursor = self.getCursor()
 		cursor.execute("SELECT * FROM users")
