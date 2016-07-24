@@ -18,7 +18,8 @@ public class GamePlayUI : MonoBehaviour
     void Start()
     {
         Instance = this;
-        
+        GameTimeStart = 0;
+        GameMoveStart = 0;
         switch(Global.mode)
         {
             case Global.MODE.classic:
@@ -41,7 +42,7 @@ public class GamePlayUI : MonoBehaviour
 
     private static int Score(int move, int clear, int time, int min)
     {
-        int score = (clear * 100 - (int)(System.Math.Log(move - min + 25) * 10) - time * 10) / 8;
+        int score = 20 + (clear * 100 - (int)(System.Math.Log(move - min + 25) * 10) - time * 10) / 8;
         if (score < 0)
             score = 0;
         
@@ -61,8 +62,6 @@ public class GamePlayUI : MonoBehaviour
 
     private void Over()
     {
-        if (GameTimeStart - (GameTime / 100) < 0)
-            GameTimeStart = GameTime / 100;
         isPlay = false;
         int score = Score((int)GameMove, (int)GameClear, (int)(GameTimeStart == 0 ? (GameTime / 100) : GameTimeStart - (GameTime / 100)), minMove);
         GamePlay.GetInstance().EndGame(pack(score, (int)GameMove, (int)GameClear, (int)(GameTimeStart == 0 ? (GameTime / 100) : GameTimeStart - (GameTime / 100))));
@@ -118,7 +117,7 @@ public class GamePlayUI : MonoBehaviour
 
     void TimeTextUpdate()
     {
-        if (GameTimeStart > 0 && (GameTimeStart - (GameTime / 100)) < 0)
+        if (GameTimeStart > 0 && (GameTimeStart - (GameTime / 100)) <= 0)
             Over();
 
         TimeText.text = Utility.fill(

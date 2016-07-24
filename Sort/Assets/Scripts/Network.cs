@@ -11,9 +11,8 @@ public class Network : MonoBehaviour {
     public delegate void HttpRequestDelegate(int id, WWW www);
     public event HttpRequestDelegate OnHttpRequest;
     private static string token = "";
-    //http://52.78.104.39:5009/
-    //http://127.0.0.1:5009/
-    public static string server = "http://52.78.104.39:5009/",
+
+    public static string server = "http://52.78.95.138:5009/",
         useragent = "application/sort";
 
     void Start ()
