@@ -13,7 +13,7 @@ API Help  in Sort-Server/api.md
     + **PUT**
         * with parameter `user`, `client`, `flag` login(or new accout) access return a `token` and `name`
 
-- /time/<user_name>
+- /time/`<user_name>`
     + **GET**
         * get time data of users { [app_start], [game_end], [game_start] }
     + **PUT**
