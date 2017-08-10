@@ -1,4 +1,5 @@
 # Sort
+[!thumb](https://github.com/MaybeS/Sort/blob/master/assets/thumb.png?raw=true)
 This repository for SW_Maestro_ 7th 1st Assignment.
 
 Sort is Andorid Application(Game) using Unity.
