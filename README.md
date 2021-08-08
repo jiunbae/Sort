@@ -1,5 +1,5 @@
 # Sort
-![thumb](https://github.com/MaybeS/Sort/blob/master/assets/thumb.png?raw=true)
+![thumb](https://github.com/jiunbae/Sort/blob/master/assets/thumb.png?raw=true)
 This repository for SW_Maestro_ 7th 1st Assignment.
 
 Sort is Andorid Application(Game) using Unity.
@@ -23,17 +23,17 @@ Sort-Server using Python-Flask-RESTful, MySQL in AWS, RDS.
 - ~~develope app for both Android and iOS~~
 - CMS for DB
 
-## [Google Play Store](https://play.google.com/store/apps/details?id=com.MaybeStudio.Sort)
+## [Google Play Store](https://play.google.com/store/apps/details?id=com.jiunbaetudio.Sort)
 You can download release version in Google Play Store.
 
 
-## [Sort Client](https://github.com/MaybeS/Sort/blob/master/Sort/README.md)
+## [Sort Client](https://github.com/jiunbae/Sort/blob/master/Sort/README.md)
 using Unity(C#), plugins FacebookSDK, GooglePlayGames, JSONObject
 
 build for Android Application (Minumum API Level 15)
 
 
-## [Sort Server](https://github.com/MaybeS/Sort/blob/master/Sort-Server/README.md)
+## [Sort Server](https://github.com/jiunbae/Sort/blob/master/Sort-Server/README.md)
 using Python, import Flask, Flask-RESTful, PyMySql
 
 on AWS and RDS,
